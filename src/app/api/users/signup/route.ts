@@ -1,6 +1,5 @@
 import { connectDB } from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
-import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { sendMail } from "@/helpers/sendMail";

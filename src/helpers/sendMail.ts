@@ -1,10 +1,11 @@
 import User from '@/models/userModel';
-import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 export const sendMail = async ({email, emailType, userId}:any) => {
     try {
-        const hashedToken = await bcrypt.hash(userId.toString(), 10);
+        
+        const hashedToken = crypto.randomBytes(20).toString("hex");
         if(emailType === "VERIFY"){
             await User.findByIdAndUpdate(userId, {
                 verifyToken: hashedToken,
@@ -29,7 +30,7 @@ export const sendMail = async ({email, emailType, userId}:any) => {
         });
 
         const mailOptions = {
-            from: "tushat@tushar@ai",
+            from: "tushat@tushar.ai",
             to: email,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
             html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
@@ -39,6 +40,7 @@ export const sendMail = async ({email, emailType, userId}:any) => {
         const mailResponse = await transporter.sendMail(mailOptions);
         console.log("Mail Sent Successfully");
         return mailResponse;
+
     } catch (error) {
         console.log("Error in sending mail");
         console.log(error);
